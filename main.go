@@ -19,11 +19,12 @@ var style = lipgloss.NewStyle().
 	BorderForeground(lipgloss.Color("63"))
 
 type model struct {
-	s      *sim.Simulator
-	input  textinput.Model
-	window int
+	s     *sim.Simulator
+	input textinput.Model
 }
 type beat struct{}
+
+var simulator *sim.Simulator
 
 func heartbeat() tea.Cmd {
 	return tea.Tick(time.Second, func(time.Time) tea.Msg {
@@ -37,13 +38,11 @@ func initialModel() model {
 	ti.Width = 20
 
 	return model{
-		s:      sim.NewSimulator(),
-		input:  ti,
-		window: 1,
+		s:     simulator,
+		input: ti,
 	}
 }
 func (m model) Init() tea.Cmd {
-	m.s.Start()
 	return tea.Batch(textinput.Blink, heartbeat())
 }
 
@@ -56,14 +55,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.s.Stop()
 			return m, tea.Quit
 		case tea.KeyEnter:
-			if m.window == 1 && m.input.Focused() {
-				m.s.Input(m.input.Value())
-				m.input.Reset()
-				return m, nil
-			} else if m.window == 2 {
-				//place item
-				return m, nil
-			}
+			m.s.Input(m.input.Value())
+			m.input.Reset()
+			return m, nil
 		case tea.KeyRight:
 			m.s.Input("right")
 			return m, nil
@@ -89,10 +83,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case "g":
 					m.s.Input("get")
 				case "p":
-					if m.window == 1 {
-						m.window = 2
+					var res []string
+					for k, _ := range m.s.Player.Resources {
+						res = append(res, strconv.Itoa(k))
 					}
-					return m, nil
+					return newPlaceModel(res, nil), nil
 				}
 				return m, nil
 			}
@@ -108,14 +103,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	var render string
-	if m.window == 1 {
-		display := lipgloss.JoinHorizontal(0, style.Render(m.s.Place.String()), style.Render(fmt.Sprintf("Player\n%v", m.s.Player.String())))
-		render = fmt.Sprintf("%v\n%v\n%v\n", style.Render(fmt.Sprintf("Current Time: %v", strconv.Itoa(m.s.Time))), display, style.Render(m.input.View()))
-	}
+	display := lipgloss.JoinHorizontal(0, style.Render(m.s.Place.String()), style.Render(fmt.Sprintf("Player\n%v", m.s.Player.String())))
+	render = fmt.Sprintf("%v\n%v\n%v\n", style.Render(fmt.Sprintf("Current Time: %v", strconv.Itoa(m.s.Time))), display, style.Render(m.input.View()))
 	return render
 }
 
 func main() {
+	simulator = sim.NewSimulator()
+	simulator.Start()
+
 	if err := tea.NewProgram(initialModel(), tea.WithAltScreen()).Start(); err != nil {
 		fmt.Printf("Uh oh, there was an error: %v\n", err)
 		os.Exit(1)
