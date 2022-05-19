@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -17,6 +15,13 @@ func (i item) FilterValue() string { return i.title }
 
 type placeModel struct {
 	list list.Model
+}
+
+type placeMsg string
+
+func (p placeModel) buildPlaceMsg() tea.Msg {
+	i := p.list.SelectedItem().(item)
+	return placeMsg(i.Title())
 }
 
 func newPlaceModel(entries []string, m tea.Model) placeModel {
@@ -50,11 +55,9 @@ func (p placeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl-c":
 			return p, tea.Quit
 		case "esc":
-			return initialModel(), nil
+			return initMainscreen(), nil
 		case "enter":
-			cur := p.list.SelectedItem()
-			log.Println(cur.FilterValue())
-			return initialModel(), nil
+			return initMainscreen(), p.buildPlaceMsg
 		}
 	}
 

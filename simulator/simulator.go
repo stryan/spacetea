@@ -1,6 +1,8 @@
 package simulator
 
 import (
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -17,7 +19,7 @@ type Simulator struct {
 func NewSimulator() *Simulator {
 	pod := newPod()
 	player := NewPlayer()
-	pod.Place(&Plant{1, 0}, 4, 4)
+	pod.Place(newPlant(1), 4, 4)
 	pod.Tiles[0][0].User = player
 	return &Simulator{pod, NewPlayer(), 0, 0, 0, make(chan bool)}
 }
@@ -35,7 +37,8 @@ func (s *Simulator) Stop() {
 //Input sends a command to the simulator
 func (s *Simulator) Input(cmd string) {
 	cur := s.Place.Tiles[s.Px][s.Py]
-	switch cmd {
+	cmdS := strings.Split(cmd, " ")
+	switch cmdS[0] {
 	case "get":
 		if cur.Maker != nil {
 			prod := cur.Maker.Get()
@@ -43,6 +46,18 @@ func (s *Simulator) Input(cmd string) {
 				s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
 			}
 		}
+	case "place":
+		if len(cmdS) < 2 {
+			return
+		}
+		item := cmdS[1]
+		if item == strconv.Itoa(1) {
+			res := s.Place.Place(newPlant(1), s.Px, s.Py)
+			if res {
+				s.Player.Resources[1] = s.Player.Resources[1] - 1
+			}
+		}
+
 	case "left":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px, s.Py-1)
 		if res {
