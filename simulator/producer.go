@@ -5,6 +5,7 @@ type Producer interface {
 	Tick()
 	Get() Produce
 	String() string
+	Describe() string
 }
 
 //Produce is the result of a producer

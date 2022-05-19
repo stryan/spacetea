@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -39,4 +40,9 @@ func (p *Plant) Get() Produce {
 
 func (p *Plant) String() string {
 	return strconv.Itoa(p.kind)
+}
+
+//Describe returns a human useful string
+func (p *Plant) Describe() string {
+	return fmt.Sprintf("A %v plant with %v value", strconv.Itoa(p.kind), strconv.Itoa(p.value))
 }

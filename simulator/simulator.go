@@ -60,23 +60,27 @@ func (s *Simulator) Input(cmd string) {
 
 	case "left":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px, s.Py-1)
-		if res {
+		if res != nil {
 			s.Py = s.Py - 1
+			s.Player.CurrentTile = res
 		}
 	case "right":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px, s.Py+1)
-		if res {
+		if res != nil {
 			s.Py = s.Py + 1
+			s.Player.CurrentTile = res
 		}
 	case "up":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px-1, s.Py)
-		if res {
+		if res != nil {
 			s.Px = s.Px - 1
+			s.Player.CurrentTile = res
 		}
 	case "down":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px+1, s.Py)
-		if res {
+		if res != nil {
 			s.Px = s.Px + 1
+			s.Player.CurrentTile = res
 		}
 	case "quit":
 		s.Stop()

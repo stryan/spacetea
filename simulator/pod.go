@@ -32,16 +32,16 @@ func (p *Pod) Place(item Producer, x, y int) bool {
 }
 
 //MovePlayer swaps player tiles
-func (p *Pod) MovePlayer(x, y, s, t int) bool {
+func (p *Pod) MovePlayer(x, y, s, t int) *Tile {
 	if oob(x) || oob(y) || oob(s) || oob(t) {
-		return false
+		return nil
 	}
 	if p.Tiles[x][y].User == nil || p.Tiles[s][t].User != nil {
-		return false
+		return nil
 	}
 	p.Tiles[s][t].User = p.Tiles[x][y].User
 	p.Tiles[x][y].User = nil
-	return true
+	return &p.Tiles[s][t]
 }
 
 func (p *Pod) String() string {
