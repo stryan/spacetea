@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"strconv"
 	"strings"
 	"time"
 )
@@ -19,9 +18,10 @@ type Simulator struct {
 func NewSimulator() *Simulator {
 	pod := newPod()
 	player := NewPlayer()
-	pod.Place(newPlant(1), 4, 4)
+	pod.Place(newPlant(itemPlantTea), 4, 4)
 	pod.Tiles[0][0].User = player
-	return &Simulator{pod, NewPlayer(), 0, 0, 0, make(chan bool)}
+	player.Resources[convertPulper] = 1
+	return &Simulator{pod, player, 0, 0, 0, make(chan bool)}
 }
 
 //Start begins the simulation, non blocking
@@ -40,10 +40,13 @@ func (s *Simulator) Input(cmd string) {
 	cmdS := strings.Split(cmd, " ")
 	switch cmdS[0] {
 	case "get":
-		if cur.Maker != nil {
-			prod := cur.Maker.Get()
-			if prod.Kind != 0 && prod.Value > 0 {
-				s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
+		if cur.Building != nil {
+			if cur.Building.Type() == producerObject {
+				build := cur.Building.(Producer)
+				prod := build.Get()
+				if prod.Kind != 0 && prod.Value > 0 {
+					s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
+				}
 			}
 		}
 	case "place":
@@ -51,10 +54,15 @@ func (s *Simulator) Input(cmd string) {
 			return
 		}
 		item := cmdS[1]
-		if item == strconv.Itoa(1) {
-			res := s.Place.Place(newPlant(1), s.Px, s.Py)
+		if item == itemPlantTea.String() {
+			res := s.Place.Place(newPlant(itemPlantTea), s.Px, s.Py)
 			if res {
-				s.Player.Resources[1] = s.Player.Resources[1] - 1
+				s.Player.Resources[itemPlantTea] = s.Player.Resources[itemPlantTea] - 1
+			}
+		} else if item == convertPulper.String() {
+			res := s.Place.Place(newConverter(convertPulper, s.Player), s.Px, s.Py)
+			if res {
+				s.Player.Resources[convertPulper] = s.Player.Resources[convertPulper] - 1
 			}
 		}
 

@@ -6,14 +6,14 @@ import (
 
 //Tile is a tile
 type Tile struct {
-	Maker Producer
-	User  *Player
+	Building Object
+	User     *Player
 }
 
 func (t *Tile) String() string {
 	var res string
-	if t.Maker != nil {
-		res += fmt.Sprintf("There is a %v here\n", t.Maker.Describe())
+	if t.Building != nil {
+		res += fmt.Sprintf("There is a %v here\n", t.Building.Describe())
 	} else {
 		res += "Nothing here"
 	}

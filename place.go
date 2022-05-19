@@ -1,16 +1,21 @@
 package main
 
 import (
+	sim "git.saintnet.tech/stryan/spacetea/simulator"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
+var docStyle = lipgloss.NewStyle().Margin(1, 2)
+
 type item struct {
-	title, desc string
+	title, desc, id string
 }
 
 func (i item) Title() string       { return i.title }
 func (i item) Description() string { return i.desc }
+func (i item) ID() string          { return i.id }
 func (i item) FilterValue() string { return i.title }
 
 type placeModel struct {
@@ -21,17 +26,17 @@ type placeMsg string
 
 func (p placeModel) buildPlaceMsg() tea.Msg {
 	i := p.list.SelectedItem().(item)
-	return placeMsg(i.Title())
+	return placeMsg(i.ID())
 }
 
-func newPlaceModel(entries []string, m tea.Model) placeModel {
+func newPlaceModel(entries []sim.ItemEntry, m tea.Model) placeModel {
 	var p placeModel
 	items := []list.Item{}
 	for _, v := range entries {
-		items = append(items, item{v, v})
+		items = append(items, item{v.Name(), "no description", v.ID()})
 	}
 	//w,h
-	p.list = list.New(items, list.NewDefaultDelegate(), 0, 0)
+	p.list = list.New(items, list.NewDefaultDelegate(), 32, 32)
 	p.list.Title = "What do you want to place?"
 	p.list.DisableQuitKeybindings()
 	return p
@@ -48,16 +53,17 @@ func (p placeModel) Init() tea.Cmd {
 func (p placeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		p.list.SetWidth(msg.Width)
+		h, v := docStyle.GetFrameSize()
+		p.list.SetSize(msg.Width-h, msg.Height-v)
 		return p, nil
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl-c":
 			return p, tea.Quit
 		case "esc":
-			return initMainscreen(), nil
+			return initMainscreen(), heartbeat()
 		case "enter":
-			return initMainscreen(), p.buildPlaceMsg
+			return initMainscreen(), tea.Batch(p.buildPlaceMsg, heartbeat())
 		}
 	}
 

@@ -99,9 +99,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case "g":
 					m.s.Input("get")
 				case "p":
-					var res []string
-					for k := range m.s.Player.Resources {
-						res = append(res, strconv.Itoa(k))
+					var res []sim.ItemEntry
+					for _, k := range sim.GlobalItemList {
+						if m.s.Player.Resources[k] != 0 {
+							res = append(res, sim.Lookup(k))
+						}
 					}
 					return newPlaceModel(res, nil), nil
 				}
@@ -116,7 +118,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	var render string
-	display := lipgloss.JoinHorizontal(0, style.Render(m.s.Place.String()), style.Render(fmt.Sprintf("Player\n%v", m.s.Player.String())))
+	display := lipgloss.JoinHorizontal(0, style.Render(m.s.Place.String()), style.Render(fmt.Sprintf("%v", m.s.Player.String())))
 	render = fmt.Sprintf("%v\n%v\n%v\n", style.Render(fmt.Sprintf("Current Time: %v", strconv.Itoa(m.s.Time))), display, style.Render(m.input.View()))
 	return render
 }

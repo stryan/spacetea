@@ -2,6 +2,7 @@ package simulator
 
 //Producer is a game object that producers a material
 type Producer interface {
+	Object
 	Tick()
 	Get() Produce
 	String() string
@@ -10,6 +11,6 @@ type Producer interface {
 
 //Produce is the result of a producer
 type Produce struct {
-	Kind  int
+	Kind  itemType
 	Value int
 }

@@ -15,17 +15,17 @@ func newPod() *Pod {
 func (p *Pod) Tick() {
 	for i := range p.Tiles {
 		for _, v := range p.Tiles[i] {
-			if v.Maker != nil {
-				v.Maker.Tick()
+			if v.Building != nil {
+				v.Building.Tick()
 			}
 		}
 	}
 }
 
 //Place an item on a tile
-func (p *Pod) Place(item Producer, x, y int) bool {
-	if p.Tiles[x][y].Maker == nil {
-		p.Tiles[x][y].Maker = item
+func (p *Pod) Place(item Object, x, y int) bool {
+	if p.Tiles[x][y].Building == nil {
+		p.Tiles[x][y].Building = item
 		return true
 	}
 	return false
@@ -52,8 +52,8 @@ func (p *Pod) String() string {
 		for _, v := range p.Tiles[i] {
 			if v.User != nil {
 				res += "@"
-			} else if v.Maker != nil {
-				res += v.Maker.String()
+			} else if v.Building != nil {
+				res += v.Building.String()
 			} else {
 				res += "."
 			}
