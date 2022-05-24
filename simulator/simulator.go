@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -20,7 +21,7 @@ func NewSimulator() *Simulator {
 	player := NewPlayer()
 	pod.Place(newPlant(itemPlantTea), 4, 4)
 	pod.Tiles[0][0].User = player
-	player.Resources[convertPulper] = 1
+	player.Announce("Game started")
 	return &Simulator{pod, player, 0, 0, 0, make(chan bool)}
 }
 
@@ -46,6 +47,7 @@ func (s *Simulator) Input(cmd string) {
 				prod := build.Get()
 				if prod.Kind != 0 && prod.Value > 0 {
 					s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
+					s.Player.Announce(fmt.Sprintf("Gathered %v %v", prod.Value, Lookup(prod.Kind).Name()))
 				}
 			}
 		}
@@ -65,7 +67,20 @@ func (s *Simulator) Input(cmd string) {
 				s.Player.Resources[convertPulper] = s.Player.Resources[convertPulper] - 1
 			}
 		}
+	case "craft":
+		if len(cmdS) < 2 {
+			return
+		}
+		item := cmdS[1]
+		if item == convertPulper.String() {
+			if _, ok := s.Player.Techs[techPulper]; ok {
+				if s.Player.Resources[itemPlantTea] > 5 {
 
+					s.Player.Resources[convertPulper] = s.Player.Resources[convertPulper] + 1
+					s.Player.Resources[itemPlantTea] = s.Player.Resources[itemPlantTea] - 5
+				}
+			}
+		}
 	case "left":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px, s.Py-1)
 		if res != nil {
@@ -104,6 +119,7 @@ func (s *Simulator) main() {
 		case <-ticker.C:
 			s.Time = s.Time + 1
 			s.Place.Tick()
+			s.Player.research()
 		}
 	}
 }

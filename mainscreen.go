@@ -65,6 +65,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		simc := fmt.Sprintf("place %v", string(msg))
 		m.s.Input(simc)
 		return m, nil
+	case craftMsg:
+		simc := fmt.Sprintf("craft %v", string(msg))
+		m.s.Input(simc)
+		return m, nil
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeyCtrlC:
@@ -106,6 +110,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						}
 					}
 					return newPlaceModel(res, nil), nil
+				case "c":
+					var res []sim.ItemEntry
+					for _, k := range sim.GlobalTechList {
+						if _, ok := m.s.Player.Techs[k]; ok {
+							res = append(res, sim.LookupTech(k))
+						}
+					}
+					return newCraftModel(res, nil), nil
 				}
 				return m, nil
 			}
@@ -118,7 +130,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	var render string
-	display := lipgloss.JoinHorizontal(0, style.Render(m.s.Place.String()), style.Render(fmt.Sprintf("%v", m.s.Player.String())))
-	render = fmt.Sprintf("%v\n%v\n%v\n", style.Render(fmt.Sprintf("Current Time: %v", strconv.Itoa(m.s.Time))), display, style.Render(m.input.View()))
+	playerAndLog := lipgloss.JoinVertical(0, style.Render(fmt.Sprintf("%v", m.s.Player.String())), style.Render(fmt.Sprintf("%v", m.s.Player.Log())))
+	placeAndInput := lipgloss.JoinVertical(0, style.Render(m.s.Place.String()), style.Render(m.input.View()))
+	display := lipgloss.JoinHorizontal(0, placeAndInput, playerAndLog)
+	render = fmt.Sprintf("%v\n%v\n", style.Render(fmt.Sprintf("Current Time: %v", strconv.Itoa(m.s.Time))), display)
 	return render
 }
