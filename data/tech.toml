@@ -2,5 +2,19 @@
 techid = 1
 name = "teaConverter"
 displayName = "Tea Pulper"
-unlocks = ["2"]
-require = []
+unlocks = ["teaConverter"]
+[[tech.requires]]
+name = "tea"
+value = 10
+
+[[tech]]
+techid = 2
+name = "teaPlanting"
+displayName = "Tea Planters"
+unlocks = ["teaPlanter"]
+[[tech.requires]]
+name = "tea"
+value = 20
+[[tech.requires]]
+name = "teaConverter"
+value = 1

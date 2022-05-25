@@ -16,14 +16,21 @@ func (p *Pod) Tick() {
 	for i := range p.Tiles {
 		for _, v := range p.Tiles[i] {
 			if v.Building != nil {
-				v.Building.Tick()
+				if v.Building.Type() == consumerObject {
+					obj := v.Building.(*Converter)
+					obj.Tick()
+				}
+				if v.Building.Type() == resourceObject {
+					obj := v.Building.(*Resource)
+					obj.Tick()
+				}
 			}
 		}
 	}
 }
 
 //Place an item on a tile
-func (p *Pod) Place(item Object, x, y int) bool {
+func (p *Pod) Place(item item, x, y int) bool {
 	if p.Tiles[x][y].Building == nil {
 		p.Tiles[x][y].Building = item
 		return true
@@ -53,7 +60,7 @@ func (p *Pod) String() string {
 			if v.User != nil {
 				res += "@"
 			} else if v.Building != nil {
-				res += v.Building.String()
+				res += v.Building.Render()
 			} else {
 				res += "."
 			}

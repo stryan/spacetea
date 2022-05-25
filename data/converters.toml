@@ -5,4 +5,16 @@ displayName = "Tea Pulper"
 source = "tea"
 output = "brick"
 rate = 5
+icon = "m"
+[[converter.costs]]
+name = "tea"
+value = 10
 
+[[converter]]
+itemid = 4
+name = "teaPlanter"
+displayName = "Tea Planter"
+source = ""
+output = "tea"
+rate = 0
+icon = "w"

@@ -14,4 +14,6 @@ type ObjectType int
 const (
 	producerObject ObjectType = iota
 	consumerObject
+	resourceObject
+	emptyObject
 )

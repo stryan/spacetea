@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 )
@@ -19,8 +20,23 @@ type Simulator struct {
 func NewSimulator() *Simulator {
 	pod := newPod()
 	player := NewPlayer()
+	log.Println("loading items")
+	initItems()
+	log.Println("loading techs")
 	loadTechs("data/tech.toml")
-	pod.Place(newPlant(itemPlantTea), 4, 4)
+	log.Println("loading resources")
+	loadResources("data/items.toml")
+	log.Println("loading converters")
+	loadConverters("data/converters.toml")
+	if len(GlobalItems) < 1 {
+		panic("Loaded items but nothing in global items table")
+	}
+	if len(GlobalTechs) < 1 {
+		panic("Loaded items but nothing in global items table")
+	}
+	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
+	player.Resources[itemType(1)] = 30
+	player.Resources[itemType(3)] = 5
 	pod.Tiles[0][0].User = player
 	player.Announce("Game started")
 	return &Simulator{pod, player, 0, 0, 0, make(chan bool)}
@@ -43,12 +59,12 @@ func (s *Simulator) Input(cmd string) {
 	switch cmdS[0] {
 	case "get":
 		if cur.Building != nil {
-			if cur.Building.Type() == producerObject {
-				build := cur.Building.(Producer)
+			if cur.Building.Type() == resourceObject {
+				build := cur.Building.(*Resource)
 				prod := build.Get()
 				if prod.Kind != 0 && prod.Value > 0 {
 					s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
-					s.Player.Announce(fmt.Sprintf("Gathered %v %v", prod.Value, Lookup(prod.Kind).Name()))
+					s.Player.Announce(fmt.Sprintf("Gathered %v %v", prod.Value, GlobalItems[prod.Kind].Describe()))
 				}
 			}
 		}
@@ -57,15 +73,26 @@ func (s *Simulator) Input(cmd string) {
 			return
 		}
 		item := cmdS[1]
-		if item == itemPlantTea.String() {
-			res := s.Place.Place(newPlant(itemPlantTea), s.Px, s.Py)
+		s.Player.Announce(fmt.Sprintf("placing %v", item))
+		obj := lookupByName(item)
+		switch obj.Type() {
+		case emptyObject:
+			return
+		//case producerObject:
+		//obj = obj.(Producer)
+		case consumerObject:
+			obj2 := obj.(Converter)
+			res := s.Place.Place(newConverter(obj2.ID(), s.Player), s.Px, s.Py)
 			if res {
-				s.Player.Resources[itemPlantTea] = s.Player.Resources[itemPlantTea] - 1
+				s.Player.Resources[obj2.ID()] = s.Player.Resources[obj2.ID()] - 1
 			}
-		} else if item == convertPulper.String() {
-			res := s.Place.Place(newConverter(convertPulper, s.Player), s.Px, s.Py)
-			if res {
-				s.Player.Resources[convertPulper] = s.Player.Resources[convertPulper] - 1
+		case resourceObject:
+			obj2 := obj.(Resource)
+			if obj2.Buildable {
+				res := s.Place.Place(newResource(obj2.ID()), s.Px, s.Py)
+				if res {
+					s.Player.Resources[obj2.ID()] = s.Player.Resources[obj2.ID()] - 1
+				}
 			}
 		}
 	case "craft":
@@ -73,15 +100,27 @@ func (s *Simulator) Input(cmd string) {
 			return
 		}
 		item := cmdS[1]
-		if item == convertPulper.String() {
-			if _, ok := s.Player.Techs[techPulper]; ok {
-				if s.Player.Resources[itemPlantTea] > 5 {
-
-					s.Player.Resources[convertPulper] = s.Player.Resources[convertPulper] + 1
-					s.Player.Resources[itemPlantTea] = s.Player.Resources[itemPlantTea] - 5
+		s.Player.Announce(fmt.Sprintf("Crafting %v", item))
+		obj := lookupByName(item)
+		switch obj.Type() {
+		case emptyObject:
+			return
+		case consumerObject:
+			obj2 := obj.(Converter)
+			i := 0
+			for _, v := range obj2.Costs {
+				if s.Player.Resources[lookupByName(v.Name).ID()] >= v.Value {
+					i++
 				}
 			}
+			if i == len(obj2.Costs) {
+				for _, v := range obj2.Costs {
+					s.Player.Resources[lookupByName(v.Name).ID()] = s.Player.Resources[lookupByName(v.Name).ID()] - v.Value
+				}
+				s.Player.Resources[lookupByName(obj2.String()).ID()] = s.Player.Resources[lookupByName(obj2.String()).ID()] + 1
+			}
 		}
+
 	case "left":
 		res := s.Place.MovePlayer(s.Px, s.Py, s.Px, s.Py-1)
 		if res != nil {

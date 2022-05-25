@@ -3,9 +3,13 @@ itemid = 1
 name = "tea"
 displayName = "Tea"
 buildable = true
+icon = "p"
 rate = 3
 
 [[resource]]
 itemid = 2
 name = "brick"
 displayName = "Tea Bricks"
+icon = "b"
+buildable = false
+
