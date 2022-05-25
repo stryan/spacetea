@@ -35,8 +35,8 @@ func NewSimulator() *Simulator {
 		panic("Loaded items but nothing in global items table")
 	}
 	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
-	player.Resources[itemType(1)] = 30
-	player.Resources[itemType(3)] = 5
+	player.AddItem(itemType(1), 30)
+	player.AddItem(itemType(3), 5)
 	pod.Tiles[0][0].User = player
 	player.Announce("Game started")
 	return &Simulator{pod, player, 0, 0, 0, make(chan bool)}
@@ -63,11 +63,18 @@ func (s *Simulator) Input(cmd string) {
 				build := cur.Building.(*Resource)
 				prod := build.Get()
 				if prod.Kind != 0 && prod.Value > 0 {
-					s.Player.Resources[prod.Kind] = s.Player.Resources[prod.Kind] + prod.Value
+					s.Player.AddItem(prod.Kind, prod.Value)
 					s.Player.Announce(fmt.Sprintf("Gathered %v %v", prod.Value, GlobalItems[prod.Kind].Describe()))
 				}
 			}
 		}
+	case "pickup":
+		if cur.Building != nil {
+			s.Player.AddItem(cur.Building.ID(), 1)
+			s.Place.Delete(s.Px, s.Py)
+		}
+	case "destroy":
+		s.Place.Delete(s.Px, s.Py)
 	case "place":
 		if len(cmdS) < 2 {
 			return
@@ -84,14 +91,14 @@ func (s *Simulator) Input(cmd string) {
 			obj2 := obj.(Converter)
 			res := s.Place.Place(newConverter(obj2.ID(), s.Player), s.Px, s.Py)
 			if res {
-				s.Player.Resources[obj2.ID()] = s.Player.Resources[obj2.ID()] - 1
+				s.Player.DelItem(obj2.ID(), 1)
 			}
 		case resourceObject:
 			obj2 := obj.(Resource)
 			if obj2.Buildable {
 				res := s.Place.Place(newResource(obj2.ID()), s.Px, s.Py)
 				if res {
-					s.Player.Resources[obj2.ID()] = s.Player.Resources[obj2.ID()] - 1
+					s.Player.DelItem(obj2.ID(), 1)
 				}
 			}
 		}
@@ -115,9 +122,9 @@ func (s *Simulator) Input(cmd string) {
 			}
 			if i == len(obj2.Costs) {
 				for _, v := range obj2.Costs {
-					s.Player.Resources[lookupByName(v.Name).ID()] = s.Player.Resources[lookupByName(v.Name).ID()] - v.Value
+					s.Player.DelItemByName(v.Name, v.Value)
 				}
-				s.Player.Resources[lookupByName(obj2.String()).ID()] = s.Player.Resources[lookupByName(obj2.String()).ID()] + 1
+				s.Player.AddItemByName(obj2.String(), 1)
 			}
 		}
 

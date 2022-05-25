@@ -4,7 +4,7 @@ name = "teaConverter"
 displayName = "Tea Pulper"
 source = "tea"
 output = "brick"
-rate = 5
+rate = 4
 icon = "m"
 [[converter.costs]]
 name = "tea"
@@ -18,3 +18,6 @@ source = ""
 output = "tea"
 rate = 0
 icon = "w"
+[[converter.costs]]
+name = "brick"
+value = 3

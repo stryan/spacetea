@@ -9,7 +9,6 @@ import (
 //Player is a player controlled mob
 type Player struct {
 	Resources   map[itemType]int
-	Inventory   map[itemType]int
 	Craftables  map[itemType]struct{}
 	Techs       map[TechID]Tech
 	CurrentTile *Tile
@@ -22,6 +21,37 @@ func NewPlayer() *Player {
 	return &Player{Resources: make(map[itemType]int), Techs: make(map[TechID]Tech), Craftables: make(map[itemType]struct{})}
 }
 
+//AddItemByName adds the given amount of the item using the item name
+func (p *Player) AddItemByName(name string, value int) {
+	obj := lookupByName(name)
+	if obj.Type() != emptyObject {
+		p.AddItem(obj.ID(), value)
+	}
+}
+
+//AddItem adds the given amount of the item
+func (p *Player) AddItem(i itemType, value int) {
+	if v, ok := p.Resources[i]; ok {
+		p.Resources[i] = v + value
+	} else {
+		p.Resources[i] = value
+	}
+}
+
+//DelItem removes the given ammount of the item
+func (p *Player) DelItem(i itemType, value int) {
+	if v, ok := p.Resources[i]; ok {
+		p.Resources[i] = v - value
+	}
+}
+
+//DelItemByName removes the given ammount of the item using the item name
+func (p *Player) DelItemByName(name string, value int) {
+	obj := lookupByName(name)
+	if obj.Type() != emptyObject {
+		p.DelItem(obj.ID(), value)
+	}
+}
 func (p *Player) String() string {
 	var res string
 	res += "Resources: \n"

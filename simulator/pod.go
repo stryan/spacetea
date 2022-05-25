@@ -38,6 +38,11 @@ func (p *Pod) Place(item item, x, y int) bool {
 	return false
 }
 
+//Delete removes an item from a tile
+func (p *Pod) Delete(x, y int) {
+	p.Tiles[x][y].Building = nil
+}
+
 //MovePlayer swaps player tiles
 func (p *Pod) MovePlayer(x, y, s, t int) *Tile {
 	if oob(x) || oob(y) || oob(s) || oob(t) {

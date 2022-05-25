@@ -48,10 +48,10 @@ func newConverter(k itemType, o *Player) *Converter {
 //Tick one iteration
 func (c *Converter) Tick() {
 	if c.source == 0 {
-		c.owner.Resources[c.output] = c.owner.Resources[c.output] + 1
+		c.owner.AddItem(c.output, 1)
 	} else if c.owner.Resources[c.source] > c.Rate {
-		c.owner.Resources[c.source] = c.owner.Resources[c.source] - c.Rate
-		c.owner.Resources[c.output] = c.owner.Resources[c.output] + 1
+		c.owner.DelItem(c.source, c.Rate)
+		c.owner.AddItem(c.output, 1)
 	}
 }
 

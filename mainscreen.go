@@ -110,6 +110,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						}
 					}
 					return newMenuModel(res, placeMenu), nil
+				case ",":
+					m.s.Input("pickup")
+				case "x":
+					m.s.Input("destroy")
 				case "c":
 					var res []sim.ItemEntry
 					for k := range m.s.Player.Craftables {
