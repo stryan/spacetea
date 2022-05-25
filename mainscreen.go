@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"time"
 
@@ -103,23 +104,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case "g":
 					m.s.Input("get")
 				case "p":
-					var res []sim.ItemEntry
+					var res entrylist
 					for _, k := range sim.GlobalItems {
 						if m.s.Player.Resources[k.ID()] != 0 {
 							res = append(res, k.(sim.ItemEntry))
 						}
 					}
+					sort.Sort(res)
 					return newMenuModel(res, placeMenu), nil
 				case ",":
 					m.s.Input("pickup")
 				case "x":
 					m.s.Input("destroy")
 				case "c":
-					var res []sim.ItemEntry
+					var res entrylist
 					for k := range m.s.Player.Craftables {
 						res = append(res, sim.GlobalItems[k].(sim.ItemEntry))
 					}
-
+					sort.Sort(res)
 					return newMenuModel(res, craftMenu), nil
 				}
 				return m, nil
