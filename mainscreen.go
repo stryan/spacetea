@@ -104,20 +104,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.s.Input("get")
 				case "p":
 					var res []sim.ItemEntry
-					for _, k := range sim.GlobalItemList {
-						if m.s.Player.Resources[k] != 0 {
-							res = append(res, sim.Lookup(k))
+					for _, k := range sim.GlobalItems {
+						if m.s.Player.Resources[k.ID()] != 0 {
+							res = append(res, k.(sim.ItemEntry))
 						}
 					}
-					return newPlaceModel(res, nil), nil
+					return newMenuModel(res, placeMenu), nil
 				case "c":
 					var res []sim.ItemEntry
-					for _, k := range sim.GlobalTechList {
-						if _, ok := m.s.Player.Techs[k]; ok {
-							res = append(res, sim.LookupTech(k))
-						}
+					for k := range m.s.Player.Craftables {
+						res = append(res, sim.GlobalItems[k].(sim.ItemEntry))
 					}
-					return newCraftModel(res, nil), nil
+
+					return newMenuModel(res, craftMenu), nil
 				}
 				return m, nil
 			}
