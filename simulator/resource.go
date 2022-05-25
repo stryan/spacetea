@@ -1,8 +1,6 @@
 package simulator
 
 import (
-	"log"
-
 	"github.com/BurntSushi/toml"
 )
 
@@ -11,6 +9,7 @@ type Resource struct {
 	Id          itemType `toml:"itemid"`
 	Name        string   `toml:"name"`
 	DisplayName string   `toml:"displayName"`
+	Flavour     string   `toml:"flavour"`
 	Buildable   bool     `toml:"buildable"`
 	Rate        int      `toml:"rate"`
 	Icon        string   `toml:"icon"`
@@ -27,10 +26,12 @@ func newResource(k itemType) *Resource {
 	if template, ok := GlobalItems[k]; ok {
 		temp := template.(Resource)
 		res.DisplayName = temp.DisplayName
+		res.Flavour = temp.Flavour
 		res.Id = k
 		res.Name = temp.Name
 		res.Buildable = temp.Buildable
 		res.Rate = temp.Rate
+		res.Flavour = temp.Flavour
 		res.Icon = temp.Icon
 		res.value = 0
 		res.growth = 0
@@ -69,10 +70,13 @@ func (r Resource) Render() string {
 func (r Resource) Describe() string {
 	return r.DisplayName
 }
+
+func (r Resource) Description() string {
+	return r.Flavour
+}
 func loadResources(filename string) {
 	var res resources
-	foo, err := toml.DecodeFile(filename, &res)
-	log.Println(foo.Undecoded())
+	_, err := toml.DecodeFile(filename, &res)
 	if err != nil {
 		panic(err)
 	}

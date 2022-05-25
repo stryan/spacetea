@@ -17,7 +17,9 @@ type item interface {
 //ItemEntry is a human/ui friendly item description
 type ItemEntry interface {
 	String() string
+	Describe() string
 	Render() string
+	Description() string
 	ID() itemType
 }
 

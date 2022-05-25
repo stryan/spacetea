@@ -2,6 +2,7 @@
 itemid = 1
 name = "tea"
 displayName = "Tea"
+flavour = "Simple tea leaves. If only I could boil water.."
 buildable = true
 icon = "p"
 rate = 3
@@ -10,6 +11,7 @@ rate = 3
 itemid = 2
 name = "brick"
 displayName = "Tea Bricks"
+flavour = "Tea compressed into a brick shape"
 icon = "b"
 buildable = false
 

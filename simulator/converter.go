@@ -10,6 +10,7 @@ type Converter struct {
 	Name        string   `toml:"name"`
 	DisplayName string   `toml:"displayName"`
 	Icon        string   `toml:"icon"`
+	Flavour     string   `toml:"flavour"`
 	Rate        int      `toml:"rate"`
 	source      itemType
 	SourceName  string `toml:"source"`
@@ -35,6 +36,7 @@ func newConverter(k itemType, o *Player) *Converter {
 		res.DisplayName = temp.DisplayName
 		res.Name = temp.Name
 		res.Icon = temp.Icon
+		res.Flavour = temp.Flavour
 		res.source = lookupByName(temp.SourceName).ID()
 		res.output = lookupByName(temp.OutputName).ID()
 		res.Rate = temp.Rate
@@ -66,6 +68,11 @@ func (c Converter) Render() string {
 //Describe returns human useful string
 func (c Converter) Describe() string {
 	return c.DisplayName
+}
+
+//Description returns flavour description
+func (c Converter) Description() string {
+	return c.Flavour
 }
 
 //Type returns consumer

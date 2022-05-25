@@ -15,6 +15,7 @@ type Tech struct {
 	ID          TechID     `toml:"techid"`
 	DisplayName string     `toml:"displayName"`
 	Name        string     `toml:"name"`
+	Flavour     string     `toml:"flavour"`
 	Requires    []relation `toml:"requires"`
 	Unlocks     []string   `toml:"unlocks"`
 }

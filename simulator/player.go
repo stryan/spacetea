@@ -65,7 +65,7 @@ func (p *Player) String() string {
 	sort.Ints(ress)
 	for _, k := range ress {
 		id := itemType(k)
-		res += fmt.Sprintf("%v: %v\n", GlobalItems[id], p.Resources[id])
+		res += fmt.Sprintf("%v: %v\n", GlobalItems[id].Describe(), p.Resources[id])
 	}
 	res += "\nLocation: \n"
 	if p.CurrentTile != nil {

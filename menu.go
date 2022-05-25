@@ -39,10 +39,10 @@ func newMenuModel(entries []sim.ItemEntry, i menutype) menuModel {
 	p.kind = i
 	items := []list.Item{}
 	for _, v := range entries {
-		items = append(items, item{v.String(), "no description", v.ID().String(), v})
+		items = append(items, item{v.Describe(), v.Description(), v.ID().String(), v})
 	}
 	//w,h
-	p.list = list.New(items, list.NewDefaultDelegate(), 32, 32)
+	p.list = list.New(items, list.NewDefaultDelegate(), 80, 32)
 	switch i {
 	case placeMenu:
 		p.list.Title = "What do you want to place?"
