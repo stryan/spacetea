@@ -1,0 +1,6 @@
+[[tech]]
+techid = 1
+name = "teaConverter"
+displayName = "Tea Pulper"
+unlocks = ["2"]
+require = []

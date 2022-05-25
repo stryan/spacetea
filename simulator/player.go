@@ -8,7 +8,8 @@ import (
 //Player is a player controlled mob
 type Player struct {
 	Resources   map[itemType]int
-	Techs       map[Tech]struct{}
+	Craftables  map[itemType]struct{}
+	Techs       map[TechID]struct{}
 	CurrentTile *Tile
 	log         []string
 	logIndex    int
@@ -16,7 +17,7 @@ type Player struct {
 
 //NewPlayer initializes a player
 func NewPlayer() *Player {
-	return &Player{Resources: make(map[itemType]int), Techs: make(map[Tech]struct{})}
+	return &Player{Resources: make(map[itemType]int), Techs: make(map[TechID]struct{})}
 }
 
 func (p *Player) String() string {

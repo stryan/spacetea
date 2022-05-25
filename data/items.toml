@@ -1,0 +1,11 @@
+[[resource]]
+itemid = 1
+name = "tea"
+displayName = "Tea"
+buildable = true
+rate = 3
+
+[[resource]]
+itemid = 2
+name = "brick"
+displayName = "Tea Bricks"

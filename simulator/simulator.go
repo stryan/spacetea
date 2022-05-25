@@ -19,6 +19,7 @@ type Simulator struct {
 func NewSimulator() *Simulator {
 	pod := newPod()
 	player := NewPlayer()
+	loadTechs("data/tech.toml")
 	pod.Place(newPlant(itemPlantTea), 4, 4)
 	pod.Tiles[0][0].User = player
 	player.Announce("Game started")

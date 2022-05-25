@@ -1,0 +1,8 @@
+[[converter]]
+itemid = 3
+name = "teaConverter"
+displayName = "Tea Pulper"
+source = "tea"
+output = "brick"
+rate = 5
+
