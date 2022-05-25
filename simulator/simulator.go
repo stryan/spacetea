@@ -25,7 +25,7 @@ func NewSimulator() *Simulator {
 	log.Println("loading techs")
 	loadTechs("data/tech.toml")
 	log.Println("loading resources")
-	loadResources("data/items.toml")
+	loadResources("data/resources.toml")
 	log.Println("loading converters")
 	loadConverters("data/converters.toml")
 	if len(GlobalItems) < 1 {
