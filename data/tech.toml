@@ -1,20 +1,29 @@
 [[tech]]
 techid = 1
-name = "teaConverter"
-displayName = "Tea Pulper"
-unlocks = ["teaConverter"]
+name = "teaTech"
+displayName = "Tea Manipulation"
+unlocks = ["teaConverter","teaPlanter"]
 [[tech.requires]]
 name = "tea"
 value = 10
 
 [[tech]]
 techid = 2
-name = "teaPlanting"
-displayName = "Tea Planters"
-unlocks = ["teaPlanter"]
+name = "basicHarvest"
+displayName = "Harvesting"
+unlocks = ["cutter","kiln"]
+[[tech.requires]]
+name = "brick"
+value = 15
 [[tech.requires]]
 name = "tea"
-value = 20
+value = 30
+
+[[tech]]
+techid = 3
+name = "basicHunt"
+displayName = "Trapping"
+unlocks = ["veggieTrap"]
 [[tech.requires]]
-name = "teaConverter"
-value = 1
+name = "metal"
+value = 30

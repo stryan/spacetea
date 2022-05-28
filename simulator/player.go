@@ -104,17 +104,21 @@ func (p *Player) research() {
 func (p *Player) Announce(msg string) {
 	p.logIndex++
 	p.log = append(p.log, strconv.Itoa(p.logIndex)+" "+msg)
-	if len(p.log) > 4 {
-		p.log = p.log[1:]
-	}
 }
 
 //Log returns the player log
 func (p *Player) Log() string {
 	res := "Log:\n"
-	for i, v := range p.log {
+	start := p.logIndex - 4
+	if start < 0 {
+		start = 0
+	}
+	end := p.logIndex
+	for i := start; i < end; i++ {
+
+		v := p.log[i]
 		res += v
-		if i < 3 {
+		if i != end {
 			res += "\n"
 		}
 	}

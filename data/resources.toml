@@ -15,3 +15,35 @@ flavour = "Tea compressed into a brick shape"
 icon = "b"
 buildable = false
 
+
+[[resource]]
+itemid = 5
+name = "metal"
+displayName = "Metal"
+flavour = "Bricks transmuted into metal. Wait how did that happen?"
+icon = "m"
+buildable = false
+
+[[resource]]
+itemid = 6
+name = "wood"
+displayName = "Wood"
+flavour = "A sturdy piece of wood"
+icon = "T"
+buildable = false
+
+[[resource]]
+itemid = 7
+name = "soup"
+displayName = "Vegetable Soup"
+flavour = "Smells delicious"
+icon = "u"
+buildable = true
+
+[[resource]]
+itemid = 8
+name = "hide"
+displayName = "Leather Hide"
+flavour = "Tanned hide, good for many uses"
+icon = "_"
+buildable = false

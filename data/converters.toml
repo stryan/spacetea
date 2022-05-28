@@ -23,3 +23,51 @@ icon = "w"
 [[converter.costs]]
 name = "brick"
 value = 3
+
+[[converter]]
+itemid = 9
+name = "kiln"
+displayName = "Brick kiln"
+flavour = "Forge your own destiny"
+source = "brick"
+output = "metal"
+rate = 10
+icon = "k"
+[[converter.costs]]
+name = "brick"
+value = 20
+[[converter.costs]]
+name = "tea"
+value = 10
+
+[[converter]]
+itemid = 10
+name = "veggieTrap"
+displayName = "Baited Trap"
+flavour = "If I like the smell of soup, who knows what else does?"
+source = "soup"
+output = "hide"
+rate = 15
+icon = "^"
+[[converter.costs]]
+name = "wood"
+value = 5
+[[converter.costs]]
+name = "soup"
+value = 1
+
+[[converter]]
+itemid = 11
+name = "cutter"
+displayName = "Cutting station"
+flavour = "Good metal lets you take down the tallest tree"
+source = ""
+output = "wood"
+rate = 0
+icon = "C"
+[[converter.costs]]
+name = "metal"
+value = 10
+[[converter.costs]]
+name = "brick"
+value = 20
