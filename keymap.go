@@ -14,6 +14,7 @@ type keyMap struct {
 	Destroy key.Binding
 	Place   key.Binding
 	Craft   key.Binding
+	Journal key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
@@ -26,7 +27,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Up, k.Down, k.Left, k.Right, k.Gather, k.Place, k.Craft, k.Destroy, k.Pickup, k.Help, k.Quit}, //second column
+		{k.Up, k.Down, k.Left, k.Right, k.Gather, k.Place, k.Craft, k.Destroy, k.Pickup, k.Journal, k.Help, k.Quit}, //second column
 	}
 }
 
@@ -74,5 +75,9 @@ var keys = keyMap{
 	Craft: key.NewBinding(
 		key.WithKeys("c"),
 		key.WithHelp("c", "craft object"),
+	),
+	Journal: key.NewBinding(
+		key.WithKeys("v"),
+		key.WithHelp("v", "view journal"),
 	),
 }

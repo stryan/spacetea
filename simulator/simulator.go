@@ -28,11 +28,16 @@ func NewSimulator() *Simulator {
 	loadResources("data/resources.toml")
 	log.Println("loading converters")
 	loadConverters("data/converters.toml")
+	log.Println("loading journal")
+	loadPages("data/journal.toml")
 	if len(GlobalItems) < 1 {
 		panic("Loaded items but nothing in global items table")
 	}
 	if len(GlobalTechs) < 1 {
 		panic("Loaded items but nothing in global items table")
+	}
+	if len(GlobalPages) < 1 {
+		panic("Loaded journal but no pages in table")
 	}
 	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
 	player.AddItem(itemType(1), 30)
@@ -167,6 +172,7 @@ func (s *Simulator) main() {
 			s.Time = s.Time + 1
 			s.Place.Tick()
 			s.Player.research()
+			s.Player.journal()
 		}
 	}
 }

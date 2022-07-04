@@ -11,6 +11,7 @@ type Player struct {
 	Resources   map[itemType]int
 	Craftables  map[itemType]struct{}
 	Techs       map[TechID]Tech
+	Pages       map[PageID]JournalPage
 	CurrentTile *Tile
 	log         []string
 	logIndex    int
@@ -18,7 +19,13 @@ type Player struct {
 
 //NewPlayer initializes a player
 func NewPlayer() *Player {
-	return &Player{Resources: make(map[itemType]int), Techs: make(map[TechID]Tech), Craftables: make(map[itemType]struct{})}
+	p := &Player{
+		Resources:  make(map[itemType]int),
+		Techs:      make(map[TechID]Tech),
+		Craftables: make(map[itemType]struct{}),
+		Pages:      make(map[PageID]JournalPage),
+	}
+	return p
 }
 
 //AddItemByName adds the given amount of the item using the item name
@@ -96,6 +103,26 @@ func (p *Player) research() {
 				}
 			}
 			p.Announce(fmt.Sprintf("New Tech: %v", tech.DisplayName))
+		}
+	}
+}
+
+func (p *Player) journal() {
+	for _, page := range GlobalPages {
+		if _, ok := p.Pages[page.PageID]; ok {
+			continue
+		}
+
+		i := 0
+		for _, v := range page.Requires {
+			req := lookupByName(v.Name)
+			if p.Resources[req.ID()] >= v.Value {
+				i++
+			}
+		}
+		if i == len(page.Requires) {
+			p.Pages[page.PageID] = page
+			p.Announce(fmt.Sprintf("New Journal: %v", page.Title))
 		}
 	}
 }

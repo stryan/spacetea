@@ -22,11 +22,12 @@ var style = lipgloss.NewStyle().
 	BorderForeground(lipgloss.Color("63"))
 
 type model struct {
-	s     *sim.Simulator
-	input textinput.Model
-	help  help.Model
-	keys  keyMap
-	next  string
+	s        *sim.Simulator
+	input    textinput.Model
+	help     help.Model
+	keys     keyMap
+	next     string
+	lastSize tea.WindowSizeMsg
 }
 
 type beat struct{}
@@ -71,6 +72,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, heartbeat()
 	case tea.WindowSizeMsg:
 		m.help.Width = msg.Width
+		m.lastSize = msg
+
 	case placeMsg:
 		simc := fmt.Sprintf("place %v", string(msg))
 		m.s.Input(simc)
@@ -79,6 +82,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		simc := fmt.Sprintf("craft %v", string(msg))
 		m.s.Input(simc)
 		return m, nil
+	case readMsg:
+		pid, err := strconv.Atoi(string(msg))
+		if err != nil {
+			panic(err)
+		}
+		return newJView(sim.GlobalPages[pid].Title, sim.GlobalPages[pid].Content), m.GetSize
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keys.Help):
@@ -109,7 +118,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 			sort.Sort(res)
-			return newMenuModel(res, placeMenu), nil
+			return newMenuModel(res, placeMenu), m.GetSize
 		case key.Matches(msg, m.keys.Pickup):
 			m.s.Input("pickup")
 		case key.Matches(msg, m.keys.Destroy):
@@ -120,7 +129,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res = append(res, sim.GlobalItems[k].(sim.ItemEntry))
 			}
 			sort.Sort(res)
-			return newMenuModel(res, craftMenu), nil
+			return newMenuModel(res, craftMenu), m.GetSize
+		case key.Matches(msg, m.keys.Journal):
+			var res pagelist
+			for k := range m.s.Player.Pages {
+				res = append(res, sim.GlobalPages[k])
+			}
+			sort.Sort(res)
+			return newJMenuModel(res), m.GetSize
 		}
 	}
 	m.input, cmd = m.input.Update(msg)
@@ -139,4 +155,8 @@ func (m model) View() string {
 		render = style.Render(m.help.View(m.keys))
 	}
 	return render
+}
+
+func (m model) GetSize() tea.Msg {
+	return m.lastSize
 }

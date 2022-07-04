@@ -14,6 +14,7 @@ type menutype int
 const (
 	placeMenu menutype = iota
 	craftMenu
+	journalMenu
 )
 
 type item struct {
@@ -27,8 +28,9 @@ func (i item) ID() string          { return i.id }
 func (i item) FilterValue() string { return i.title }
 
 type menuModel struct {
-	list list.Model
-	kind menutype
+	list     list.Model
+	kind     menutype
+	lastSize tea.WindowSizeMsg
 }
 
 type placeMsg string
@@ -80,15 +82,16 @@ func (p menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
 		p.list.SetSize(msg.Width-h, msg.Height-v)
+		p.lastSize = msg
 		return p, nil
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl-c":
 			return p, tea.Quit
 		case "esc":
-			return initMainscreen(), heartbeat()
+			return initMainscreen(), tea.Batch(p.GetSize, heartbeat())
 		case "enter":
-			return initMainscreen(), tea.Batch(p.buildMenuMsg, heartbeat())
+			return initMainscreen(), tea.Batch(p.GetSize, p.buildMenuMsg, heartbeat())
 		}
 	}
 
@@ -101,4 +104,8 @@ func (p menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // rendered after every Update.
 func (p menuModel) View() string {
 	return p.list.View()
+}
+
+func (p menuModel) GetSize() tea.Msg {
+	return p.lastSize
 }

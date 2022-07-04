@@ -1,0 +1,13 @@
+[[journalpage]]
+pageid = 0
+title = "It Begins"
+content = "So much to learn"
+[[journalpage.requires]]
+
+[[journalpage]]
+pageid = 1
+title = "Building"
+content = "Craft that motherfucking tea button"
+[[journalpage.requires]]
+name = "tea"
+value = 10

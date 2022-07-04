@@ -7,7 +7,7 @@ type parent struct {
 }
 
 func (m parent) Init() tea.Cmd {
-	return tea.Batch(m.current.Init(), tea.EnterAltScreen)
+	return tea.Batch(tea.EnterAltScreen, m.current.Init())
 }
 
 func (m parent) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
