@@ -31,13 +31,15 @@ type menuModel struct {
 	list     list.Model
 	kind     menutype
 	lastSize tea.WindowSizeMsg
+	acc      *Account
 }
 
 type placeMsg string
 type craftMsg string
 
-func newMenuModel(entries []sim.ItemEntry, i menutype) menuModel {
+func newMenuModel(entries []sim.ItemEntry, i menutype, acc *Account) menuModel {
 	var p menuModel
+	p.acc = acc
 	p.kind = i
 	items := []list.Item{}
 	for _, v := range entries {
@@ -89,9 +91,9 @@ func (p menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl-c":
 			return p, tea.Quit
 		case "esc":
-			return initMainscreen(), tea.Batch(p.GetSize, heartbeat())
+			return initMainscreen(p.acc), tea.Batch(p.GetSize, heartbeat())
 		case "enter":
-			return initMainscreen(), tea.Batch(p.GetSize, p.buildMenuMsg, heartbeat())
+			return initMainscreen(p.acc), tea.Batch(p.GetSize, p.buildMenuMsg, heartbeat())
 		}
 	}
 

@@ -31,10 +31,11 @@ type jview struct {
 	ready    bool
 	lastSize tea.WindowSizeMsg
 	viewport viewport.Model
+	acc      *Account
 }
 
-func newJView(title, content string) jview {
-	return jview{title: title, content: content}
+func newJView(title, content string, acc *Account) jview {
+	return jview{title: title, content: content, acc: acc}
 }
 
 func (m jview) Init() tea.Cmd {
@@ -50,7 +51,7 @@ func (m jview) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if k := msg.String(); k == "ctrl+c" || k == "q" || k == "esc" {
-			return initMainscreen(), tea.Batch(m.GetSize, heartbeat())
+			return initMainscreen(m.acc), tea.Batch(m.GetSize, heartbeat())
 		}
 
 	case tea.WindowSizeMsg:

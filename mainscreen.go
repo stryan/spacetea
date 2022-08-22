@@ -28,6 +28,7 @@ type model struct {
 	keys     keyMap
 	next     string
 	lastSize tea.WindowSizeMsg
+	acc      *Account
 }
 
 type beat struct{}
@@ -47,17 +48,18 @@ func (m model) simCommand() tea.Msg {
 	}
 	return nil
 }
-func initMainscreen(sim *simulator) model {
+func initMainscreen(acc *Account) model {
 	ti := textinput.New()
 	ti.Placeholder = "input command"
 	ti.CharLimit = 156
 	ti.Width = 20
 
 	return model{
-		s:     sim,
+		s:     acc.Simulator,
 		input: ti,
 		help:  help.New(),
 		keys:  keys,
+		acc:   acc,
 	}
 }
 func (m model) Init() tea.Cmd {
@@ -87,7 +89,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if err != nil {
 			panic(err)
 		}
-		return newJView(sim.GlobalPages[pid].Title, sim.GlobalPages[pid].Content), m.GetSize
+		return newJView(sim.GlobalPages[pid].Title, sim.GlobalPages[pid].Content, m.acc), m.GetSize
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keys.Help):
@@ -118,7 +120,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 			sort.Sort(res)
-			return newMenuModel(res, placeMenu), m.GetSize
+			return newMenuModel(res, placeMenu, m.acc), m.GetSize
 		case key.Matches(msg, m.keys.Pickup):
 			m.s.Input("pickup")
 		case key.Matches(msg, m.keys.Destroy):
@@ -129,14 +131,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res = append(res, sim.GlobalItems[k].(sim.ItemEntry))
 			}
 			sort.Sort(res)
-			return newMenuModel(res, craftMenu), m.GetSize
+			return newMenuModel(res, craftMenu, m.acc), m.GetSize
 		case key.Matches(msg, m.keys.Journal):
 			var res pagelist
 			for k := range m.s.Player.Pages {
 				res = append(res, sim.GlobalPages[k])
 			}
 			sort.Sort(res)
-			return newJMenuModel(res), m.GetSize
+			return newJMenuModel(res, m.acc), m.GetSize
 		}
 	}
 	m.input, cmd = m.input.Update(msg)

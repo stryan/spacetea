@@ -11,7 +11,7 @@ type LandmarkID int
 
 //Landmark is a flavour location
 type Landmark struct {
-	LandmarkID LandmarkID   `toml:"pageid"`
+	LandmarkID LandmarkID   `toml:"landmarkid"`
 	Name       string       `toml:"title"`
 	Content    string       `toml:"content"`
 	Links      []LandmarkID `toml:"links"`

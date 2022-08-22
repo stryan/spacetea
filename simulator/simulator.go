@@ -16,10 +16,20 @@ type Simulator struct {
 	stop   chan bool
 }
 
-//NewSimulator creates a new simulator instance
-func NewSimulator() *Simulator {
+func Demo(s *Simulator) {
 	pod := newPod()
 	player := NewPlayer()
+	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
+	player.AddItem(itemType(1), 30)
+	player.AddItem(itemType(3), 5)
+	pod.Tiles[0][0].User = player
+	player.Announce("Game started")
+	s.Place = pod
+	s.Player = player
+}
+
+//NewSimulator creates a new simulator instance
+func NewSimulator() *Simulator {
 	log.Println("loading items")
 	initItems()
 	log.Println("loading techs")
@@ -45,12 +55,7 @@ func NewSimulator() *Simulator {
 		panic("Loaded landmarks but nothing in table")
 	}
 
-	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
-	player.AddItem(itemType(1), 30)
-	player.AddItem(itemType(3), 5)
-	pod.Tiles[0][0].User = player
-	player.Announce("Game started")
-	return &Simulator{pod, player, 0, 0, 0, make(chan bool)}
+	return &Simulator{nil, nil, 0, 0, 0, make(chan bool)}
 }
 
 //Start begins the simulation, non blocking

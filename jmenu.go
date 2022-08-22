@@ -16,13 +16,14 @@ func (i jEntry) ID() string          { return i.id }
 func (i jEntry) FilterValue() string { return i.title }
 
 type jMenuModel struct {
+	acc      *Account
 	list     list.Model
 	lastSize tea.WindowSizeMsg
 }
 
 type readMsg string
 
-func newJMenuModel(pages []sim.JournalPage) jMenuModel {
+func newJMenuModel(pages []sim.JournalPage, acc *Account) jMenuModel {
 	var jm jMenuModel
 	items := []list.Item{}
 	for _, v := range pages {
@@ -31,6 +32,7 @@ func newJMenuModel(pages []sim.JournalPage) jMenuModel {
 	jm.list = list.New(items, list.NewDefaultDelegate(), 80, 32)
 	jm.list.DisableQuitKeybindings()
 	jm.list.Title = "Read which entry?"
+	jm.acc = acc
 	return jm
 }
 
@@ -52,9 +54,9 @@ func (j jMenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl-c":
 			return j, tea.Quit
 		case "esc":
-			return initMainscreen(), tea.Batch(j.GetSize, heartbeat())
+			return initMainscreen(j.acc), tea.Batch(j.GetSize, heartbeat())
 		case "enter":
-			return initMainscreen(), tea.Batch(j.GetSize, j.buildJmenuMsg, heartbeat())
+			return initMainscreen(j.acc), tea.Batch(j.GetSize, j.buildJmenuMsg, heartbeat())
 		}
 	}
 
