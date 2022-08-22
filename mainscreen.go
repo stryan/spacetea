@@ -47,14 +47,14 @@ func (m model) simCommand() tea.Msg {
 	}
 	return nil
 }
-func initMainscreen() model {
+func initMainscreen(sim *simulator) model {
 	ti := textinput.New()
 	ti.Placeholder = "input command"
 	ti.CharLimit = 156
 	ti.Width = 20
 
 	return model{
-		s:     simulator,
+		s:     sim,
 		input: ti,
 		help:  help.New(),
 		keys:  keys,

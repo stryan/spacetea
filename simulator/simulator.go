@@ -30,6 +30,8 @@ func NewSimulator() *Simulator {
 	loadConverters("data/converters.toml")
 	log.Println("loading journal")
 	loadPages("data/journal.toml")
+	log.Println("loading landmarks")
+	loadLandmarks("data/landmark.toml")
 	if len(GlobalItems) < 1 {
 		panic("Loaded items but nothing in global items table")
 	}
@@ -39,6 +41,10 @@ func NewSimulator() *Simulator {
 	if len(GlobalPages) < 1 {
 		panic("Loaded journal but no pages in table")
 	}
+	if len(GlobalLandmarks) < 1 {
+		panic("Loaded landmarks but nothing in table")
+	}
+
 	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
 	player.AddItem(itemType(1), 30)
 	player.AddItem(itemType(3), 5)
