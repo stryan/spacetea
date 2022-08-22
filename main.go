@@ -11,12 +11,14 @@ import (
 
 func main() {
 	simulator := sim.NewSimulator()
-	sim.Demo(simulator)
+	player := sim.NewPlayer()
 	acc := &Account{
-		Player:    simulator.Player,
+		Player:    player,
 		Simulator: simulator,
 		Landmark:  nil,
 	}
+	sim.Demo(acc.Player, acc.Simulator)
+
 	simulator.Start()
 	parent := parent{initMainscreen(acc)}
 	if err := tea.NewProgram(parent, tea.WithAltScreen()).Start(); err != nil {

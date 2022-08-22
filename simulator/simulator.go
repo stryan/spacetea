@@ -16,16 +16,15 @@ type Simulator struct {
 	stop   chan bool
 }
 
-func Demo(s *Simulator) {
+func Demo(p *Player, s *Simulator) {
 	pod := newPod()
-	player := NewPlayer()
 	pod.Place(newResource(lookupByName("tea").ID()), 4, 4)
-	player.AddItem(itemType(1), 30)
-	player.AddItem(itemType(3), 5)
-	pod.Tiles[0][0].User = player
-	player.Announce("Game started")
+	p.AddItem(itemType(1), 30)
+	p.AddItem(itemType(3), 5)
+	pod.Tiles[0][0].User = p
+	p.Announce("Game started")
 	s.Place = pod
-	s.Player = player
+	s.Player = p
 }
 
 //NewSimulator creates a new simulator instance

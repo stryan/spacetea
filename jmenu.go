@@ -52,7 +52,7 @@ func (j jMenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl-c":
-			return j, tea.Quit
+			return j, tea.Batch(tea.Quit, j.GetSize)
 		case "esc":
 			return initMainscreen(j.acc), tea.Batch(j.GetSize, heartbeat())
 		case "enter":

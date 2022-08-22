@@ -1,0 +1,11 @@
+[[landmark]]
+landmarkid = 0
+name = "Spawn"
+content = "Nothing's here but us chickens"
+links = [1]
+
+[[landmark]]
+landmarkid = 1
+name = "Landmark 1"
+content = "New spot"
+links = []
